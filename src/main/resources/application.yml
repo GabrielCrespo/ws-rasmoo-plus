@@ -1,6 +1,12 @@
 spring:
   application:
     name: ws-rasmoo-plus
+  datasource:
+    url: jdbc:mysql://localhost:3306/RASPLUS
+    username: rasmoo
+    password: senha123
+  flyway:
+    enabled: true
 
 server:
   port: 8082
