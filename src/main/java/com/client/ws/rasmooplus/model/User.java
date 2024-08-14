@@ -21,10 +21,13 @@ public class User implements Serializable {
     @Column(name = "users_id")
     private Long id;
 
+    @Column(unique = true)
     private String name;
 
+    @Column(unique = true)
     private String email;
 
+    @Column(unique = true)
     private String phone;
 
     private String cpf;
