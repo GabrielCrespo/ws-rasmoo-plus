@@ -27,8 +27,7 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
 
     @Override
     public SubscriptionType findById(Long id) {
-        return subscriptionTypeRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("SubscriptionType não encontrado"));
+        return getSubscriptionType(id);
     }
 
     @Override
@@ -51,12 +50,31 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
     }
 
     @Override
-    public SubscriptionType update(Long id, SubscriptionType subscriptionType) {
-        return null;
+    public SubscriptionType update(Long id, SubscriptionTypeDto dto) {
+
+        getSubscriptionType(id);
+
+        SubscriptionType subscriptionType = SubscriptionType.builder()
+                .id(id)
+                .name(dto.name())
+                .accessMonth(dto.accesMonth())
+                .price(dto.price())
+                .productKey(dto.productKey())
+                .build();
+
+        subscriptionType = subscriptionTypeRepository.save(subscriptionType);
+
+        return subscriptionType;
+
     }
 
     @Override
     public void delete(Long id) {
 
+    }
+
+    private SubscriptionType getSubscriptionType(Long id) {
+        return subscriptionTypeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("SubscriptionType não encontrado"));
     }
 }
