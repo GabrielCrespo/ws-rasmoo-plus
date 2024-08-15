@@ -3,6 +3,7 @@ package com.client.ws.rasmooplus.service.impl;
 import com.client.ws.rasmooplus.dto.SubscriptionTypeDto;
 import com.client.ws.rasmooplus.exception.BadRequestException;
 import com.client.ws.rasmooplus.exception.NotFoundException;
+import com.client.ws.rasmooplus.mapper.SubscriptionTypeMapper;
 import com.client.ws.rasmooplus.model.SubscriptionType;
 import com.client.ws.rasmooplus.repository.SubscriptionTypeRepository;
 import com.client.ws.rasmooplus.service.SubscriptionTypeService;
@@ -37,12 +38,7 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
             throw new BadRequestException("O id deve ser nulo");
         }
 
-        SubscriptionType subscriptionType = SubscriptionType.builder()
-                .name(dto.name())
-                .accessMonth(dto.accesMonth())
-                .price(dto.price())
-                .productKey(dto.productKey())
-                .build();
+        SubscriptionType subscriptionType = SubscriptionTypeMapper.fromDtoToEntity(dto);
 
         subscriptionType = subscriptionTypeRepository.save(subscriptionType);
 
@@ -54,14 +50,9 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
 
         getSubscriptionType(id);
 
-        SubscriptionType subscriptionType = SubscriptionType.builder()
-                .id(id)
-                .name(dto.name())
-                .accessMonth(dto.accesMonth())
-                .price(dto.price())
-                .productKey(dto.productKey())
-                .build();
 
+        SubscriptionType subscriptionType = SubscriptionTypeMapper.fromDtoToEntity(dto);
+        subscriptionType.setId(id);
         subscriptionType = subscriptionTypeRepository.save(subscriptionType);
 
         return subscriptionType;
