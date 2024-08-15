@@ -44,24 +44,9 @@ public class User implements Serializable {
     private UserType userType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subscription_type_id")
+    @JoinColumn(name = "subscriptions_type_id")
     @ToString.Exclude
     private SubscriptionType subscriptionType;
 
-    public void setSubscriptionType(SubscriptionType subscriptionType) {
-        this.subscriptionType = subscriptionType;
-    }
-
-    public SubscriptionType getSubscriptionType() {
-        return subscriptionType;
-    }
-
-    public void setUserType(UserType userType) {
-        this.userType = userType;
-    }
-
-    public UserType getUserType() {
-        return userType;
-    }
 
 }
