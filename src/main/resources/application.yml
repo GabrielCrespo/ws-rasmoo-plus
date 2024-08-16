@@ -12,3 +12,11 @@ server:
   port: 8082
   servlet:
     context-path: /ws-rasplus
+
+webservices:
+  raspay:
+    host: ${RASPAY_HOST:http://localhost:8081/ws-raspay}
+    v1:
+      customer: ${RASPAY_CUSTOMER:/v1/customer}
+      order: ${RASPAY_ORDER:/v1/order}
+      payment: ${RASPAY_PAYMENT:/v1/payment/credit-card/}
