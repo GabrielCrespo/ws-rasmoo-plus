@@ -1,0 +1,24 @@
+package com.client.ws.rasmooplus.mapper;
+
+import com.client.ws.rasmooplus.dto.PaymentInfoDto;
+import com.client.ws.rasmooplus.model.User;
+import com.client.ws.rasmooplus.model.UserPaymentInfo;
+
+import java.time.LocalDate;
+
+public class UserPaymentInfoMapper {
+
+    public static UserPaymentInfo fromDtoToEntity(PaymentInfoDto dto, User user) {
+        return UserPaymentInfo.builder()
+                .id(dto.id())
+                .cardNumber(dto.cardNumber())
+                .cardExpirationMonth(dto.cardExpirationMonth())
+                .cardExpirationYear(dto.cardExpirationYear())
+                .cardSecurityCode(dto.cardSecurityCode())
+                .price(dto.price())
+                .dtPayment(LocalDate.now())
+                .user(user)
+                .build();
+    }
+
+}
