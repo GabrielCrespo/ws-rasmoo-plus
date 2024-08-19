@@ -31,3 +31,12 @@ webservices:
       customer: ${RASPAY_CUSTOMER:/v1/customer}
       order: ${RASPAY_ORDER:/v1/order}
       payment: ${RASPAY_PAYMENT:/v1/payment/credit-card/}
+
+springdoc:
+  swagger-ui:
+    path: /rasmoo-documentation
+    tryItOutEnabled: true
+  api-docs:
+    path: /rasmoo-api-docs
+  packages-to-scan: com.client.ws.rasmooplus.controller
+
