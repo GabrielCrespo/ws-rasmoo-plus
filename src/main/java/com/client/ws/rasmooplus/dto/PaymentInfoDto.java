@@ -22,7 +22,7 @@ public record PaymentInfoDto(
 
         BigDecimal price,
 
-        Long instalments,
+        Long installments,
 
         LocalDate dtPayment,
 

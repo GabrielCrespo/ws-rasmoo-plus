@@ -9,7 +9,7 @@ public class CreditCardMapper {
         return new CreditCardDto(
                 Long.parseLong(paymentInfoDto.cardSecurityCode()),
                 documentNumber,
-                paymentInfoDto.instalments(),
+                paymentInfoDto.installments(),
                 paymentInfoDto.cardNumber(),
                 paymentInfoDto.cardExpirationMonth(),
                 paymentInfoDto.cardExpirationYear()

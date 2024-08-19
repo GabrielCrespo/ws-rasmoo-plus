@@ -18,9 +18,11 @@ import com.client.ws.rasmooplus.model.UserPaymentInfo;
 import com.client.ws.rasmooplus.repository.UserPaymentInfoRepository;
 import com.client.ws.rasmooplus.repository.UserRepository;
 import com.client.ws.rasmooplus.service.PaymentInfoService;
+import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+@Service
 public class PaymentInfoServiceImpl implements PaymentInfoService {
 
     private final UserRepository userRepository;
