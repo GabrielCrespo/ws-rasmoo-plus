@@ -7,6 +7,7 @@ import com.client.ws.rasmooplus.dto.wsraspay.OrderDto;
 import com.client.ws.rasmooplus.dto.wsraspay.PaymentDto;
 import com.client.ws.rasmooplus.exception.BusinessException;
 import com.client.ws.rasmooplus.exception.NotFoundException;
+import com.client.ws.rasmooplus.integration.MailIntegration;
 import com.client.ws.rasmooplus.integration.WsRaspayIntegration;
 import com.client.ws.rasmooplus.mapper.UserPaymentInfoMapper;
 import com.client.ws.rasmooplus.mapper.wsraspay.CreditCardMapper;
@@ -28,10 +29,17 @@ public class PaymentInfoServiceImpl implements PaymentInfoService {
 
     private final WsRaspayIntegration wsRaspayIntegration;
 
-    public PaymentInfoServiceImpl(UserRepository userRepository, UserPaymentInfoRepository userPaymentInfoRepository, WsRaspayIntegration wsRaspayIntegration) {
+    private final MailIntegration mailIntegration;
+
+    public PaymentInfoServiceImpl(
+            UserRepository userRepository,
+            UserPaymentInfoRepository userPaymentInfoRepository,
+            WsRaspayIntegration wsRaspayIntegration,
+            MailIntegration mailIntegration) {
         this.userRepository = userRepository;
         this.userPaymentInfoRepository = userPaymentInfoRepository;
         this.wsRaspayIntegration = wsRaspayIntegration;
+        this.mailIntegration = mailIntegration;
     }
 
     @Override
@@ -53,11 +61,16 @@ public class PaymentInfoServiceImpl implements PaymentInfoService {
         Boolean successPayment = wsRaspayIntegration.processPayment(paymentDto);
 
         if (Boolean.TRUE.equals(successPayment)) {
+
             UserPaymentInfo userPaymentInfo = UserPaymentInfoMapper.fromDtoToEntity(dto.paymentInfoDto(), user);
             userPaymentInfoRepository.save(userPaymentInfo);
+
+            mailIntegration.send(user.getEmail(), String.format("Usuario: %s - Senha: alunorasmoo", user.getEmail()),
+                    "Acesso liberado");
+
+            return Boolean.TRUE;
         }
 
-
-        return false;
+        return Boolean.FALSE;
     }
 }
