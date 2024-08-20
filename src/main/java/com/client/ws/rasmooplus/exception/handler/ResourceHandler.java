@@ -11,10 +11,12 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestControllerAdvice
 public class ResourceHandler {
@@ -62,6 +64,15 @@ public class ResourceHandler {
     public ResponseEntity<ErrorResponseDto> businessException(BusinessException e) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(e.getMessage(), HttpStatus.CONFLICT, HttpStatus.CONFLICT.value());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponseDto> httpClientErrorException(HttpClientErrorException e) {
+        HttpStatus httpStatus = HttpStatus.resolve(e.getStatusCode().value());
+        ErrorResponseDto errorResponse = new ErrorResponseDto(e.getMessage(), httpStatus,
+                Objects.nonNull(httpStatus) ? httpStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return ResponseEntity.status(Objects.nonNull(httpStatus) ? httpStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .body(errorResponse);
     }
 
 

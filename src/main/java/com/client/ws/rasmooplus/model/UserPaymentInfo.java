@@ -36,7 +36,7 @@ public class UserPaymentInfo implements Serializable {
 
     private BigDecimal price;
 
-    private Long instalments;
+    private Long installments;
 
     @Column(name = "dt_payment")
     private LocalDate dtPayment;

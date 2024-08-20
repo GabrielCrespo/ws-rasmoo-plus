@@ -4,20 +4,23 @@ import com.client.ws.rasmooplus.dto.wsraspay.CustomerDto;
 import com.client.ws.rasmooplus.dto.wsraspay.OrderDto;
 import com.client.ws.rasmooplus.dto.wsraspay.PaymentDto;
 import com.client.ws.rasmooplus.integration.WsRaspayIntegration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
 
 @Component
 public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
+
+    public static final String AUTHORIZATION = "Authorization";
+
+    public static final String BASIC = "Basic ";
 
     @Value("${webservices.raspay.host}")
     private String raspayHost;
@@ -31,22 +34,23 @@ public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
     @Value("${webservices.raspay.v1.payment}")
     private String paymentUrl;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WsRaspayIntegrationImpl.class);
+    @Value("${webservices.raspay.credentials.user}")
+    private String user;
+
+    @Value("${webservices.raspay.credentials.password}")
+    private String password;
 
     private final RestTemplate restTemplate;
 
-    public WsRaspayIntegrationImpl() {
-        this.restTemplate = new RestTemplate();
+    public WsRaspayIntegrationImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
     public CustomerDto createCustomer(CustomerDto dto) {
 
         try {
-            HttpHeaders httpHeaders = new HttpHeaders();
-            String credentials = "rasmoo:r@sm00";
-            String base64 = new String(Base64.getEncoder().encode(credentials.getBytes()));
-            httpHeaders.add("Authorization", "Basic " + base64);
+            HttpHeaders httpHeaders = getHttpHeaders();
             HttpEntity<CustomerDto> request = new HttpEntity<>(dto, httpHeaders);
 
             ResponseEntity<CustomerDto> response =
@@ -56,9 +60,8 @@ public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
                             CustomerDto.class);
 
             return response.getBody();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw e;
+        } catch (HttpClientErrorException e) {
+            throw new HttpClientErrorException(e.getStatusCode());
         }
     }
 
@@ -66,10 +69,7 @@ public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
     public OrderDto createOrder(OrderDto dto) {
 
         try {
-            HttpHeaders httpHeaders = new HttpHeaders();
-            String credentials = "rasmoo:r@sm00";
-            String base64 = new String(Base64.getEncoder().encode(credentials.getBytes()));
-            httpHeaders.add("Authorization", "Basic " + base64);
+            HttpHeaders httpHeaders = getHttpHeaders();
             HttpEntity<OrderDto> request = new HttpEntity<>(dto, httpHeaders);
 
             ResponseEntity<OrderDto> response =
@@ -79,9 +79,8 @@ public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
                             OrderDto.class);
 
             return response.getBody();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw e;
+        } catch (HttpClientErrorException e) {
+            throw new HttpClientErrorException(e.getStatusCode());
         }
 
     }
@@ -90,23 +89,28 @@ public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
     public Boolean processPayment(PaymentDto dto) {
 
         try {
-            HttpHeaders httpHeaders = new HttpHeaders();
-            String credentials = "rasmoo:r@sm00";
-            String base64 = new String(Base64.getEncoder().encode(credentials.getBytes()));
-            httpHeaders.add("Authorization", "Basic " + base64);
+            HttpHeaders httpHeaders = getHttpHeaders();
             HttpEntity<PaymentDto> request = new HttpEntity<>(dto, httpHeaders);
 
             ResponseEntity<Boolean> response =
-                    restTemplate.exchange(raspayHost + customerUrl,
+                    restTemplate.exchange(raspayHost + paymentUrl,
                             HttpMethod.POST,
                             request,
                             Boolean.class);
 
             return response.getBody();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw e;
+        } catch (HttpClientErrorException e) {
+            throw new HttpClientErrorException(e.getStatusCode());
         }
+    }
+
+
+    private HttpHeaders getHttpHeaders() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        String credentials = String.format("%s:%s", user, password);
+        String base64 = new String(Base64.getEncoder().encode(credentials.getBytes()));
+        httpHeaders.add(AUTHORIZATION, BASIC + base64);
+        return httpHeaders;
     }
 
 }
