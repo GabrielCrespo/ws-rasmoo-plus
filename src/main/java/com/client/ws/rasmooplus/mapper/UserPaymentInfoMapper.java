@@ -17,6 +17,7 @@ public class UserPaymentInfoMapper {
                 .cardSecurityCode(dto.cardSecurityCode())
                 .price(dto.price())
                 .dtPayment(LocalDate.now())
+                .installments(dto.installments())
                 .user(user)
                 .build();
     }
