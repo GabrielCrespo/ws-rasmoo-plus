@@ -34,6 +34,9 @@ webservices:
     credentials:
       user: rasmooplus
       password: r@sm00
+    token:
+      secret-key: 9399257a62c320e00e78945dff8a556cf5748ba4f136d61148271fcf1575243c
+      expiration: 3600000
 
 springdoc:
   swagger-ui:
@@ -42,4 +45,3 @@ springdoc:
   api-docs:
     path: /rasmoo-api-docs
   packages-to-scan: com.client.ws.rasmooplus.controller
-
