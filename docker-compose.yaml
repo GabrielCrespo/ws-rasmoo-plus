@@ -25,6 +25,14 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: senha123
     volumes:
       - mongo_data_container:/data/db
+
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - mongo_data_container:/data/redis
+
 volumes:
   mysql_data_container:
   mongo_data_container:
