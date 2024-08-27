@@ -5,7 +5,7 @@ services:
   mysqldb:
     image: mysql
     ports:
-        - "3306:3306"
+      - "3306:3306"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: senha123
@@ -28,11 +28,14 @@ services:
 
   redis:
     image: 'bitnami/redis:latest'
+    ports:
+      - "6379:6379"
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
-      - mongo_data_container:/data/redis
+      - redis_data_container:/data/redis
 
 volumes:
   mysql_data_container:
   mongo_data_container:
+  redis_data_container:

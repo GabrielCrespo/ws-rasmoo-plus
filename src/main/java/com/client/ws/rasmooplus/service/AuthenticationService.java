@@ -7,4 +7,6 @@ public interface AuthenticationService {
 
     TokenDto authenticate(LoginDto dto);
 
+    void sendRecoveryCode(String email);
+
 }
