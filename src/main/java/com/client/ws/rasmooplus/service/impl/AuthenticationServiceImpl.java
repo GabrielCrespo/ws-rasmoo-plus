@@ -2,6 +2,7 @@ package com.client.ws.rasmooplus.service.impl;
 
 import com.client.ws.rasmooplus.dto.LoginDto;
 import com.client.ws.rasmooplus.dto.TokenDto;
+import com.client.ws.rasmooplus.dto.UserCredentialsDto;
 import com.client.ws.rasmooplus.exception.NotFoundException;
 import com.client.ws.rasmooplus.model.redis.UserRecoveryCode;
 import com.client.ws.rasmooplus.repository.UserCredentialsRepository;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,15 +38,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRecoveryCodeRepository userRecoveryCodeRepository;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public AuthenticationServiceImpl(
             AuthenticationManager authenticationManager,
             JwtService jwtService,
             UserCredentialsRepository userCredentialsRepository,
-            UserRecoveryCodeRepository userRecoveryCodeRepository) {
+            UserRecoveryCodeRepository userRecoveryCodeRepository,
+            BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userCredentialsRepository = userCredentialsRepository;
         this.userRecoveryCodeRepository = userRecoveryCodeRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -104,6 +110,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         LocalDateTime now = LocalDateTime.now();
 
         return recoveryCode.equals(userRecoveryCode.getCode()) && now.isBefore(timeOut);
+    }
+
+    @Override
+    public void updatePasswordByRecoveryCode(UserCredentialsDto dto) {
+
+        if (recoveryCodeIsValid(dto.recoveryCode(), dto.email())) {
+            userCredentialsRepository.findByUsername(dto.email())
+                    .ifPresent(userCredentials -> {
+                        userCredentials.setPassword(bCryptPasswordEncoder.encode(dto.password()));
+                        userCredentialsRepository.save(userCredentials);
+                    });
+        }
+
     }
 
 }

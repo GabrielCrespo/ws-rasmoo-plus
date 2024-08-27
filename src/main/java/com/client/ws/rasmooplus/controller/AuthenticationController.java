@@ -2,6 +2,7 @@ package com.client.ws.rasmooplus.controller;
 
 import com.client.ws.rasmooplus.dto.LoginDto;
 import com.client.ws.rasmooplus.dto.TokenDto;
+import com.client.ws.rasmooplus.dto.UserCredentialsDto;
 import com.client.ws.rasmooplus.model.redis.UserRecoveryCode;
 import com.client.ws.rasmooplus.service.AuthenticationService;
 import jakarta.validation.Valid;
@@ -33,6 +34,12 @@ public class AuthenticationController {
     public ResponseEntity<Boolean> recoveryCodeIsValid(@RequestParam(value = "recoveryCode") String recoveryCode,
                                                        @RequestParam(value = "email") String email) {
         return ResponseEntity.ok(authenticationService.recoveryCodeIsValid(recoveryCode, email));
+    }
+
+    @PatchMapping("/recovery-code/password")
+    public ResponseEntity<Void> sendRecoveryCode(@RequestBody @Valid UserCredentialsDto dto) {
+        authenticationService.updatePasswordByRecoveryCode(dto);
+        return ResponseEntity.noContent().build();
     }
 
 }
