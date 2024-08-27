@@ -9,4 +9,6 @@ public interface AuthenticationService {
 
     void sendRecoveryCode(String email);
 
+    boolean recoveryCodeIsValid(String recoveryCode, String email);
+
 }

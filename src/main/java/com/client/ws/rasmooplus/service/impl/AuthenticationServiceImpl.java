@@ -10,6 +10,7 @@ import com.client.ws.rasmooplus.service.AuthenticationService;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
     private static final Random RANDOM = new Random();
+
+    @Value("${webservices.rasplus.redis.recoverycode.timeout}")
+    private String recoveryCodeTimeout;
 
     private final AuthenticationManager authenticationManager;
 
@@ -88,6 +92,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRecoveryCodeRepository.save(userRecoveryCode);
         LOGGER.info("Código de recuperação de conta: {}", code);
 
+    }
+
+    @Override
+    public boolean recoveryCodeIsValid(String recoveryCode, String email) {
+
+        UserRecoveryCode userRecoveryCode = userRecoveryCodeRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+
+        LocalDateTime timeOut = userRecoveryCode.getCreationDate().plusMinutes(Long.parseLong(recoveryCodeTimeout));
+        LocalDateTime now = LocalDateTime.now();
+
+        return recoveryCode.equals(userRecoveryCode.getCode()) && now.isBefore(timeOut);
     }
 
 }

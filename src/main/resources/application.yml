@@ -44,6 +44,10 @@ webservices:
     token:
       secret-key: 9399257a62c320e00e78945dff8a556cf5748ba4f136d61148271fcf1575243c
       expiration: 3600000
+  rasplus:
+    redis:
+      recoverycode:
+        timeout: 5
 
 springdoc:
   swagger-ui:
