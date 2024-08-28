@@ -5,10 +5,10 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -40,13 +40,36 @@ public class User implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_type_id")
-    @ToString.Exclude
     private UserType userType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscriptions_type_id")
-    @ToString.Exclude
     private SubscriptionType subscriptionType;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", cpf='" + cpf + '\'' +
+                ", dtSubscription=" + dtSubscription +
+                ", dtExpiration=" + dtExpiration +
+                ", userType=" + userType +
+                ", subscriptionType=" + subscriptionType +
+                '}';
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getName(), user.getName()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPhone(), user.getPhone()) && Objects.equals(getCpf(), user.getCpf()) && Objects.equals(getDtSubscription(), user.getDtSubscription()) && Objects.equals(getDtExpiration(), user.getDtExpiration()) && Objects.equals(getUserType(), user.getUserType()) && Objects.equals(getSubscriptionType(), user.getSubscriptionType());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getEmail(), getPhone(), getCpf(), getDtSubscription(), getDtExpiration(), getUserType(), getSubscriptionType());
+    }
 }
